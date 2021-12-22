@@ -1,0 +1,17 @@
+{
+  "name": "sass-link",
+  "version": "1.0.0",
+  "description": "Made with component based structure in mind, use this to create a styles.scss file, containing links to all your scss partials, from which you can compile into a singular css file to use for your whole website.",
+  "main": "sassLink.js",
+  "keywords": [
+    "component",
+    "react",
+    "sass",
+    "scss"
+  ],
+  "author": "Oleson",
+  "license": "ISC",
+  "bin": {
+    "sassLink": "./sassLink.js"
+  }
+}
