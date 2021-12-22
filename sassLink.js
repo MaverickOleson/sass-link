@@ -2,31 +2,26 @@
 {
     const fs = require('fs');
     const path = require('path');
+    const chokidar = require('chokidar');
 
-    function readFolder(folder, n = 0) {
-        if (n === 0) fs.writeFileSync("styles.scss", '')
-        fs.readdir(folder, (err, files) => {
-            if (err) {
-                return false;
+    var ready = false;
+
+    fs.writeFileSync("styles.scss", '');
+    chokidar.watch('.')
+        .on('add', file => {
+            if (/^_.+\.scss$/.test(path.basename(file))) {
+                fs.writeFileSync("styles.scss", `@import '${file.replace(/\\/g, '/')}';\n`, { flag: 'a' });
+                if (ready) console.log('\x1b[35mstyles.scss written successfully with links to partials!!!\033[0m');
             }
-            files.forEach(file => {
-                if (/^\w+$/.test(file)) {
-                    readFolder((folder === process.cwd()) ? `${file}` : `${folder}/${file}`, 1);
-                }
-                if (/^_.+\.scss$/.test(file)) {
-                    fs.writeFileSync("styles.scss", `@import '${(folder === process.cwd()) ? `./${file}` : `./${folder}/${file}`}';\n`, { flag: 'a' });
-                }
-            });
-        });
-        return true;
-    }
-
-    if (path.basename(process.cwd()) === 'src') {
-        if (readFolder(process.cwd())) {
-            console.log("\x1b[35m", 'styles.scss written successfully with links to partials!!!');
-        }
-    } else {
-        console.error("\x1b[31m", 'ERROR: Must use command inside src folder!!!');
-    }
-    console.log("\x1b[0m")
+        })
+        .on('unlink', file => {
+            if (/^_.+\.scss$/.test(path.basename(file))) {
+                fs.writeFileSync('styles.scss', fs.readFileSync('styles.scss', 'utf-8').split('\n').filter(line => line !== `@import '${file.replace(/\\/g, '/')}';`).reduce((a, c) => a + '\n' + c));
+                if (ready) console.log('\x1b[35mstyles.scss written successfully with links to partials!!!\033[0m');
+            }
+        })
+        .on('ready', () => {
+            ready = true;
+            console.log('\x1b[35mstyles.scss written successfully with links to partials!!!\033[0m');
+        })
 }
