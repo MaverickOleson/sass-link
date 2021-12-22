@@ -16,5 +16,6 @@
   },
   "dependencies": {
     "chokidar": "^3.5.2"
-  }
+  },
+  "homepage": "https://github.com/Moleso587587/SassLink.git"
 }
