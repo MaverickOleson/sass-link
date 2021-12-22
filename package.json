@@ -1,6 +1,6 @@
 {
   "name": "sass-link",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Made with component based structure in mind, use this to create a styles.scss file and regularly watch your current folder for any scss partials (looks for '_<name>.scss' files in in any folder) to update this styles.scss with links to those partials! :)",
   "main": "sassLink.js",
   "keywords": [
@@ -10,13 +10,11 @@
     "scss",
     "partial"
   ],
-  "author": "Oleson",
-  "license": "ISC",
+  "author": "Maverick Oleson",
   "bin": {
     "sassLink": "./sassLink.js"
   },
   "dependencies": {
     "chokidar": "^3.5.2"
-  },
-  "homepage": "https://github.com/Moleso587587/SassLink.git"
+  }
 }
