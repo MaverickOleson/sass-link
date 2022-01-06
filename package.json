@@ -1,6 +1,6 @@
 {
   "name": "sass-link",
-  "version": "1.0.0",
+  "version": "1.0.8",
   "description": "Made with component based structure in mind, use this to create a styles.scss file and regularly watch your current folder for any scss partials (looks for '_<name>.scss' files in in any folder) to update this styles.scss with links to those partials! :)",
   "main": "sassLink.js",
   "keywords": [
