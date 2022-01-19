@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-exports.linkSass = () => {
+exports.link = () => {
     const fs = require('fs');
     const readline = require('readline');
     const path = require('path');
@@ -10,33 +10,43 @@ exports.linkSass = () => {
         output: process.stdout
     });
 
+    const css = {};
+
     var ready = false;
 
-    function getCSSFile() {
-        rl.question('Name of your css file: ', function (name) {
-            if (name == '') getCSSFile();
-            else {
-                chokidar.watch('.')
-                    .on('ready', () => {
-                        ready = true;
+    function compile(name) {
+        if (name == '' || name == undefined) rl.question('Name of your css file: ', (input) => compile(input));
+        else {
+            if (!/.+\.css/.test(name)) { name = `${name}.css` };
+            chokidar.watch('.')
+                .on('ready', () => {
+                    ready = true;
+                    console.log(`\x1b[35m${name} has been successfully compiled from all your scss partials!`, '\033[0m');
+                })
+                .on('change', file => {
+                    if (/^_.+\.scss$/.test(path.basename(file))) {
+                        css[path.basename(file)] = `${sass.compileString(fs.readFileSync(file, 'utf-8')).css}\n`;
+                        fs.writeFileSync(name, Object.values(css).reduce((a, c) => a + c, ''));
                         console.log(`\x1b[35m${name} has been successfully compiled from all your scss partials!`, '\033[0m');
-                    })
-                    .on('add', file => {
-                        if (/^_.+\.scss$/.test(path.basename(file))) {
-                            fs.writeFileSync(name, `${sass.compileString(fs.readFileSync(file, 'utf-8')).css}\n`, { flag: 'a' });
-                            if (ready) console.log('\x1b[35mstyles.scss written successfully with links to partials!!!\033[0m');
-                        }
-                    })
-                    .on('unlink', file => {
-                        if (/^_.+\.scss$/.test(path.basename(file))) {
-                            fs.writeFileSync(name, sass.compileString(fs.readFileSync(file, 'utf-8')).css);
-                            if (ready) console.log('\x1b[35mstyles.scss written successfully with links to partials!!!\033[0m');
-                        }
-                    })
-                rl.close();
-            }
-        });
+                    }
+                })
+                .on('add', file => {
+                    if (/^_.+\.scss$/.test(path.basename(file))) {
+                        css[path.basename(file)] = `${sass.compileString(fs.readFileSync(file, 'utf-8')).css}\n`;
+                        fs.writeFileSync(name, Object.values(css).reduce((a, c) => a + c, ''));
+                        if (ready) console.log(`\x1b[35m${name} has been successfully compiled from all your scss partials!`, '\033[0m');
+                    }
+                })
+                .on('unlink', file => {
+                    if (/^_.+\.scss$/.test(path.basename(file))) {
+                        delete css[path.basename(file)];
+                        fs.writeFileSync(name, Object.values(css).reduce((a, c) => a + c, ''));
+                        if (ready) console.log(`\x1b[35m${name} has been successfully compiled from all your scss partials!`, '\033[0m');
+                    }
+                })
+            rl.close();
+        }
     }
-    getCSSFile();
+    compile(process.argv[2]);
 }
-exports.linkSass();
+exports.link();
