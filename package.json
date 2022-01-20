@@ -1,14 +1,8 @@
 {
   "name": "sass-link",
-<<<<<<< HEAD
-  "version": "1.0.8",
-  "description": "Made with component based structure in mind, use this to create a styles.scss file and regularly watch your current folder for any scss partials (looks for '_<name>.scss' files in in any folder) to update this styles.scss with links to those partials! :)",
-  "main": "sassLink.js",
-=======
   "version": "2.0.0",
   "description": "This package contains a CLI command that will look for all of the sass partials (_<name>.scss) you have in your current folder and compile all of their sass stylings into the named css file, which can be named in the CLI command.",
   "main": "sassLink",
->>>>>>> testing
   "keywords": [
     "sass",
     "scss",
