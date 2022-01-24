@@ -1,6 +1,6 @@
 {
   "name": "sass-link",
-  "version": "2.0.0",
+  "version": "2.0.6",
   "description": "This package contains a CLI command that will look for all of the sass partials (_<name>.scss) you have in your current folder and compile all of their sass stylings into the named css file, which can be named in the CLI command.",
   "main": "sassLink",
   "keywords": [
@@ -14,8 +14,6 @@
   "bin": "./link.js",
   "dependencies": {
     "chokidar": "^3.5.2",
-    "path": "^0.12.7",
-    "readline": "^1.3.0",
     "sass": "^1.49.0"
   },
   "homepage": "https://github.com/Moleso587587/SassLink.git"

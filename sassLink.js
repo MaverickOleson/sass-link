@@ -11,18 +11,22 @@
     exports.link = (name) => {
         const css = {};
 
+        var ready = false;
+
         function compile(name) {
             if (name == '' || name == undefined) rl.question('Name of your css file: ', (input) => compile(input));
             else {
                 if (!/.+\.css/.test(name)) { name = `${name}.css` };
                 chokidar.watch('.')
                     .on('ready', () => {
+                        ready = true;
+                        fs.writeFileSync(name, Object.values(css).reduce((a, c) => a + c, ''));
                         console.log('SassLink is watching for changes. Press Ctrl-C to stop.\n');
                     })
                     .on('change', file => {
                         if (/^_.+\.scss$/.test(path.basename(file))) {
                             try {
-                                css[path.basename(file)] = `${sass.compileString(fs.readFileSync(file, 'utf-8')).css}\n`;
+                                css[path.basename(file)] = `${sass.compileString(fs.readFileSync(file, 'utf-8').replace(/@import .+;*/g, '').replace(/@use .+;*/g, '').replace(/@forward .+;*/g, '')).css}\n`;
                                 console.log(`\x1b[35m${name} has been successfully compiled from all your scss partials!`, '\033[0m');
                             } catch (err) {
                                 console.error(err.toString(), '\n');
@@ -33,12 +37,12 @@
                     .on('add', file => {
                         if (/^_.+\.scss$/.test(path.basename(file))) {
                             try {
-                                css[path.basename(file)] = `${sass.compileString(fs.readFileSync(file, 'utf-8')).css}\n`;
-                                console.log(`\x1b[35m${name} has been successfully compiled from all your scss partials!`, '\033[0m');
+                                css[path.basename(file)] = `${sass.compileString(fs.readFileSync(file, 'utf-8').replace(/@import .+;*/g, '').replace(/@use .+;*/g, '').replace(/@forward .+;*/g, '')).css}\n`;
+                                if (ready) console.log(`\x1b[35m${name} has been successfully compiled from all your scss partials!`, '\033[0m');
                             } catch (err) {
                                 console.error(err.toString(), '\n');
                             }
-                            fs.writeFileSync(name, Object.values(css).reduce((a, c) => a + c, ''));
+                            if (ready) fs.writeFileSync(name, Object.values(css).reduce((a, c) => a + c, ''));
                         }
                     })
                     .on('unlink', file => {
@@ -53,4 +57,5 @@
         }
         compile(name || process.argv[2]);
     }
+    exports.link();
 }
