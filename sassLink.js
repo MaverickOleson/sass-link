@@ -57,5 +57,4 @@
         }
         compile(name || process.argv[2]);
     }
-    exports.link();
 }
